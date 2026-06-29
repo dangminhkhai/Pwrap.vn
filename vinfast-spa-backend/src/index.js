@@ -92,6 +92,62 @@ module.exports = {
         }
       }
 
+      // Tự động cập nhật giao diện Admin để hiển thị trường isHot trong Edit View
+      try {
+        const configRow = await strapi.db.connection('strapi_core_store_settings')
+          .where({ key: 'plugin_content_manager_configuration_content_types::api::car-model.car-model' })
+          .first();
+          
+        if (configRow) {
+          const config = JSON.parse(configRow.value);
+          let hasChanged = false;
+          
+          // Kiểm tra xem isHot đã có trong layouts.edit chưa
+          const flatEditLayout = config.layouts.edit.flat().map(field => field.name);
+          if (!flatEditLayout.includes('isHot')) {
+            // Thêm vào kế bên order
+            for (const row of config.layouts.edit) {
+              const orderIdx = row.findIndex(field => field.name === 'order');
+              if (orderIdx !== -1) {
+                row.push({ name: 'isHot', size: 6 });
+                hasChanged = true;
+                break;
+              }
+            }
+            // Nếu không tìm thấy order, đẩy vào hàng mới
+            if (!hasChanged) {
+              config.layouts.edit.push([{ name: 'isHot', size: 6 }]);
+              hasChanged = true;
+            }
+          }
+          
+          // Thêm metadata cho isHot để hiển thị đẹp mắt
+          if (!config.metadatas.isHot) {
+            config.metadatas.isHot = {
+              edit: {
+                label: 'Dòng xe HOT?',
+                description: 'Bật công tắc này để gắn nhãn HOT nổi bật cho dòng xe này ở trang chủ'
+              },
+              list: {
+                label: 'Dòng xe HOT?',
+                searchable: true,
+                sortable: true
+              }
+            };
+            hasChanged = true;
+          }
+          
+          if (hasChanged) {
+            await strapi.db.connection('strapi_core_store_settings')
+              .where({ key: 'plugin_content_manager_configuration_content_types::api::car-model.car-model' })
+              .update({ value: JSON.stringify(config) });
+            console.log('[Demo Seed] Đã tự động cập nhật giao diện Edit View cho Dòng Xe (thêm trường isHot).');
+          }
+        }
+      } catch (layoutErr) {
+        console.error('[Demo Seed] Lỗi tự động cấu hình giao diện isHot:', layoutErr.message);
+      }
+
       // Khởi tạo bảng Cấu Hình Hệ Thống nếu chưa có
       const existingSettings = await strapi.documents('api::system-setting.system-setting').findFirst();
       if (!existingSettings) {
@@ -335,6 +391,83 @@ module.exports = {
         }
       }
       
+      // --- SEED 4 BÀI VIẾT CẨM NANG CHĂM SÓC XE DEMO ---
+      // Xóa các bài viết mẫu cũ để chuyển đổi sang định dạng CKEditor (HTML) mới
+      const demoSlugs = [
+        'kinh-nghiem-dan-phim-cach-nhiet-cho-xe-dien-vinfast',
+        'huong-dan-cham-soc-va-ve-sinh-noi-that-xe-dien-dung-cach',
+        'co-nen-dan-ppf-bao-ve-son-cho-vinfast-vf3',
+        'nhung-luu-y-quan-trong-khi-ve-sinh-khoang-dong-co-xe-vinfast'
+      ];
+      for (const slug of demoSlugs) {
+        const found = await strapi.documents('api::blog.blog').findMany({ filters: { slug } });
+        for (const item of found) {
+          await strapi.documents('api::blog.blog').delete({ documentId: item.documentId });
+        }
+      }
+
+      const existingBlogsCount = await strapi.documents('api::blog.blog').findMany({ limit: 1 });
+      if (existingBlogsCount.length === 0) {
+        const demoBlogs = [
+          {
+            title: 'Kinh nghiệm dán phim cách nhiệt cho xe điện VinFast',
+            slug: 'kinh-nghiem-dan-phim-cach-nhiet-cho-xe-dien-vinfast',
+            seoDesc: 'Phim cách nhiệt giúp chống nóng vượt trội, bảo vệ sức khỏe và tiết kiệm pin tối đa cho hệ thống điều hòa trên các dòng xe VinFast.',
+            content: `Xe điện thường có diện tích kính lái lớn để tối ưu tầm nhìn, tuy nhiên điều này làm tăng lượng nhiệt hấp thụ vào khoang cabin. Việc dán phim cách nhiệt chất lượng cao là giải pháp bắt buộc để bảo vệ nội thất và giúp hệ thống điều hòa không bị quá tải, từ đó tiết kiệm pin hiệu quả.
+
+## Lợi ích khi chọn đúng loại phim cách nhiệt
+Phim cách nhiệt cao cấp có khả năng cản tới 99% tia UV cực tím và hơn 90% tia hồng ngoại. Giúp người ngồi trong xe luôn mát mẻ, dễ chịu ngay cả dưới trời nắng gắt.`
+          },
+          {
+            title: 'Hướng dẫn chăm sóc và vệ sinh nội thất xe điện đúng cách',
+            slug: 'huong-dan-cham-soc-va-ve-sinh-noi-that-xe-dien-dung-cach',
+            seoDesc: 'Bảo vệ các chi tiết da cao cấp, màn hình cảm ứng trung tâm và hệ thống nút bấm trên xe điện VinFast luôn sạch bóng như mới.',
+            content: `Nội thất của các dòng xe điện VinFast được trang bị rất nhiều màn hình cảm ứng nhạy cảm và hệ thống điện tử hiện đại. Do đó, quy trình vệ sinh đòi hỏi phải sử dụng các dung dịch chuyên dụng và khăn microfiber mềm để tránh gây trầy xước hoặc chập điện.
+
+## Quy trình 3 bước vệ sinh tại nhà
+1. Hút bụi sạch các khe kẽ.
+2. Lau nhẹ bề mặt da bằng dung dịch dưỡng chuyên dụng.
+3. Dùng khăn khô sợi mảnh lau sạch bụi trên màn hình hiển thị.`
+          },
+          {
+            title: 'Có nên dán PPF bảo vệ sơn cho VinFast VF3?',
+            slug: 'co-nen-dan-ppf-bao-ve-son-cho-vinfast-vf3',
+            seoDesc: 'Đánh giá chi tiết ưu nhược điểm của giải pháp dán phim PPF bảo vệ sơn cho dòng xe điện mini VinFast VF3 cực hot hiện nay.',
+            content: `VinFast VF3 với kích thước nhỏ gọn rất được ưa chuộng để di chuyển hàng ngày trong đô thị. Tuy nhiên, mật độ giao thông dày đặc khiến xe rất dễ bị trầy xước do va quẹt nhẹ hoặc đá dăm bắn vào phần cản trước.
+
+## PPF - Lớp giáp bảo vệ sơn hoàn hảo
+Phim PPF (Paint Protection Film) có khả năng tự phục hồi các vết xước dăm nhỏ dưới tác động của nhiệt độ, đồng thời giữ cho màu sơn nguyên bản luôn bóng đẹp như mới mua.`
+          },
+          {
+            title: 'Những lưu ý quan trọng khi vệ sinh khoang động cơ xe VinFast',
+            slug: 'nhung-luu-y-quan-trong-khi-ve-sinh-khoang-dong-co-xe-vinfast',
+            seoDesc: 'Vệ sinh khoang máy định kỳ giúp hệ thống tản nhiệt hoạt động hiệu quả hơn và ngăn ngừa tình trạng chuột bọ làm tổ cắn phá dây điện.',
+            content: `Khoang máy là nơi chứa nhiều linh kiện điện tử và cảm biến quan trọng. Khi tự vệ sinh tại nhà, bạn tuyệt đối không được xịt nước trực tiếp dưới áp lực cao vào các giắc cắm điện hoặc hộp cầu chì.
+
+## Lời khuyên từ chuyên gia VinFast Spa
+Nên đưa xe đến các trung tâm chăm sóc chuyên nghiệp định kỳ 6 tháng một lần để được vệ sinh bằng công nghệ hơi nước nóng, đảm bảo an toàn tuyệt đối cho hệ thống điện.`
+          }
+        ];
+
+        for (const blog of demoBlogs) {
+          try {
+            await strapi.documents('api::blog.blog').create({
+              data: {
+                title: blog.title,
+                slug: blog.slug,
+                seoDesc: blog.seoDesc,
+                content: blog.content,
+                cover: mediaFiles[0]?.id || null
+              },
+              status: 'published'
+            });
+            console.log(`[Demo Seed] Đã tạo bài viết cẩm nang: "${blog.title}"`);
+          } catch (err) {
+            console.error(`[Demo Seed] Lỗi tạo bài viết "${blog.title}":`, JSON.stringify(err.details || err.message, null, 2));
+          }
+        }
+      }
+
       console.log('--- HOÀN THÀNH THÊM DỊCH VỤ DEMO TỰ ĐỘNG ---');
     } catch (error) {
       console.error('[Demo Seed] Có lỗi xảy ra:', error);

@@ -97,7 +97,11 @@ export default function HomePage({ carModels, services, carServiceDetails, blogs
               key={car.id}
               onClick={() => setSelectedCarId(car.id)}
               className={`car-tab ${selectedCarId === car.id ? 'active' : ''}`}
+              style={{ position: 'relative' }}
             >
+              {car.isHot && (
+                <span className="hot-badge">HOT</span>
+              )}
               <span className="car-name">{car.name}</span>
             </div>
           ))}
@@ -187,7 +191,7 @@ export default function HomePage({ carModels, services, carServiceDetails, blogs
       <section className="blog-home-section">
         <h2 className="section-title">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-book-open" style={{color: 'var(--primary-light)'}}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-          Cẩm nang & Tư vấn chăm sóc xe điện
+          Cẩm nang & Tư vấn chăm sóc xe
         </h2>
         
         {blogs.length === 0 ? (

@@ -10,6 +10,7 @@
   "options": {
     "draftAndPublish": true
   },
+  "pluginOptions": {},
   "attributes": {
     "title": {
       "type": "string",
@@ -19,13 +20,15 @@
       "type": "uid",
       "targetField": "title"
     },
+    "content": {
+      "type": "richtext"
+    },
     "cover": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
-    },
-    "content": {
-      "type": "blocks"
+      "allowedTypes": [
+        "images"
+      ]
     },
     "seoTitle": {
       "type": "string"

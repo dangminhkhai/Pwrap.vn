@@ -10,18 +10,17 @@ Tài liệu này lưu trữ toàn bộ ngữ cảnh, kiến trúc và các tùy 
 *   **Nút Đăng ký & Hotline:** Đã tạo component [ActionButtons.js](file:///vinfast-spa-frontend/components/ActionButtons.js) tích hợp nút **NHẬN TƯ VẤN** (mở popup điền thông tin) và **LIÊN HỆ NGAY** (gọi hotline `0833698888`).
 *   **Trang chi tiết dịch vụ:** Tích hợp bộ nút hành động vào trang chi tiết dịch vụ theo dòng xe tại [app/[carSlug]/[serviceSlug]/page.js](file:///vinfast-spa-frontend/app/[carSlug]/[serviceSlug]/page.js).
 *   **Popup Form:** Validate số điện thoại chuẩn Việt Nam (10 số, đầu số hợp lệ). Gửi thông tin đăng ký tư vấn về API Backend.
-*   **Giao diện & CSS:** Toàn bộ CSS của Popup đã được thêm vào cuối file [app/globals.css](file:///vinfast-spa-frontend/app/globals.css).
+*   **Căn giữa Car Tabs:** Cập nhật CSS để căn giữa danh sách các tab chọn dòng xe trên trang chủ.
+*   **Viết hoa tiêu đề dịch vụ:** Chuyển đổi tiêu đề dịch vụ (`.service-title` và `.detail-title`) sang viết in hoa và tăng nhẹ khoảng cách chữ (`letter-spacing`) để hiển thị sang trọng hơn.
+*   **Nhãn HOT trên Tab dòng xe:** Tự động hiển thị nhãn `HOT` dạng viên thuốc với màu gradient đỏ-cam nổi bật nếu dòng xe đó được bật `isHot` trong CMS.
+*   **Bộ giải mã Markdown (Blog):** Viết bộ giải mã Markdown tự chế siêu nhẹ tại [app/bai-viet/[slug]/page.js](file:///vinfast-spa-frontend/app/bai-viet/[slug]/page.js) để render nội dung bài viết từ Classic Rich Text của Strapi. Hỗ trợ hiển thị hình ảnh chèn trong bài viết với phong cách bo góc và đổ bóng mượt mà.
 
 ### 🔹 Phần Backend (Strapi v5)
-*   **Trường trạng thái Lead (`leadStatus`):** Đã đổi tên trường `status` cũ thành `leadStatus` trong bảng [schema.json](file:///vinfast-spa-backend/src/api/lead/content-types/lead/schema.json) để tránh xung đột với trường hệ thống của Strapi v5.
-*   **Trạng thái tiếng Việt có dấu:** Các giá trị enum được đổi thành có dấu đầy đủ: `Chưa liên hệ`, `Đã tư vấn`, `Đã chốt dịch vụ`.
-*   **Gán mặc định (Lifecycle Hook):** Cấu hình hook `beforeCreate` trong [lifecycles.js](file:///vinfast-spa-backend/src/api/lead/content-types/lead/lifecycles.js) để tự động gán trạng thái mặc định là `Chưa liên hệ` cho mọi lượt đăng ký mới từ website.
-*   **Thông báo Telegram:** Tích hợp Telegram Bot gửi tin nhắn thông báo tức thì đến Chat ID nhóm mỗi khi có khách hàng đăng ký tư vấn mới.
-*   **Tự động tô màu trạng thái trong Admin:** Viết mã tùy biến giao diện Admin tại [src/admin/app.js](file:///vinfast-spa-backend/src/admin/app.js). Sử dụng `MutationObserver` để tự động render các giá trị trạng thái tiếng Việt thành các **Huy hiệu (Badge) dạng viên thuốc** có màu sắc tương ứng:
-    *   `Chưa liên hệ`: Nền đỏ, chữ đỏ đậm.
-    *   `Đã tư vấn`: Nền vàng, chữ vàng cam.
-    *   `Đã chốt dịch vụ`: Nền xanh lá, chữ xanh lá đậm.
-*   **Seeder chuyển đổi dữ liệu cũ:** Trong [src/index.js](file:///vinfast-spa-backend/src/index.js) đã viết sẵn hàm seeder tự động quét toàn bộ database cũ khi khởi động máy chủ, tự động chuyển đổi dữ liệu sang trường `leadStatus` mới và gán giá trị tiếng Việt tương ứng.
+*   **Trường trạng thái Lead (`leadStatus`):** Đổi tên trường `status` cũ thành `leadStatus` để tránh xung đột với hệ thống. Giá trị tiếng Việt có dấu: `Chưa liên hệ`, `Đã tư vấn`, `Đã chốt dịch vụ`.
+*   **Tô màu trạng thái trong Admin:** Sử dụng `MutationObserver` tại [src/admin/app.js](file:///vinfast-spa-backend/src/admin/app.js) để tô màu chữ trạng thái của Lead (Chưa liên hệ: đỏ, Đã tư vấn: vàng cam, Đã chốt: xanh lá) mà không dùng khung viền nền cho thoáng mắt.
+*   **Trường Dòng xe HOT (`isHot`):** Thêm trường `isHot` (boolean) vào bảng Dòng Xe (`car-model`). Viết code tự động cập nhật cấu hình giao diện Admin để hiển thị công tắc `isHot` cạnh ô `order` ngay khi khởi động.
+*   **Trình soạn thảo Classic Rich Text (Markdown):** Đổi trường `content` của Bài viết (`blog`) sang kiểu dữ liệu `richtext` truyền thống của Strapi, giúp hiển thị đầy đủ thanh công cụ có sẵn nút bấm chèn Ảnh trực quan.
+*   **Gieo dữ liệu cẩm nang (Seeder):** Tự động gieo và cập nhật 4 bài viết cẩm nang chăm sóc xe mẫu dưới dạng Markdown chất lượng cao khi chạy server.
 
 ---
 
@@ -60,4 +59,4 @@ cd Pwrap.vn
 ---
 
 ## 📝 3. Lưu ý dành cho AI Assistant trên máy tính mới
-> **Lưu ý cho AI:** Khi người dùng yêu cầu lập trình tiếp, hãy đọc file này cùng các file mã nguồn liên quan để nắm được toàn bộ logic nghiệp vụ của dự án mà không cần hỏi lại người dùng về lịch sử cuộc trò chuyện cũ.
+> **Lưu ý cho AI:** Hãy đọc kỹ file này cùng các file mã nguồn liên quan. Khi lập trình tiếp, luôn đóng vai trò là một lập trình viên Node.js + Strapi chuyên nghiệp, tuân thủ các quy tắc viết code sạch, tối ưu và hiện đại.

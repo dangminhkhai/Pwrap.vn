@@ -388,6 +388,7 @@ body.light-mode .services-search-input {
 .car-tabs {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0.75rem;
   padding: 0.5rem 0.25rem 0.75rem 0.25rem;
   margin-top: -0.25rem;
@@ -405,6 +406,24 @@ body.light-mode .services-search-input {
   height: 55px;
   text-align: center;
   padding: 0 1rem;
+  position: relative;
+}
+
+.hot-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, #ef4444, #ff9100);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(239, 68, 68, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  z-index: 10;
 }
 
 .car-tab:hover {
@@ -487,10 +506,12 @@ body.light-mode .services-search-input {
   flex-grow: 1;
 }
 
-.service-title {
+.service-title, .detail-title {
   font-size: 1.2rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .service-desc {

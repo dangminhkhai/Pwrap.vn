@@ -12,32 +12,14 @@ const bootstrap = (app) => {
         const text = el.textContent.trim();
         
         if (text === 'Chưa liên hệ') {
-          el.style.backgroundColor = 'rgba(255, 68, 68, 0.12)';
           el.style.color = '#ff4444';
-          el.style.padding = '4px 12px';
-          el.style.borderRadius = '12px';
-          el.style.fontWeight = '600';
-          el.style.display = 'inline-block';
-          el.style.fontSize = '0.8rem';
-          el.style.border = '1px solid rgba(255, 68, 68, 0.2)';
+          el.style.fontWeight = '700';
         } else if (text === 'Đã tư vấn') {
-          el.style.backgroundColor = 'rgba(255, 165, 0, 0.12)';
           el.style.color = '#ff9f00';
-          el.style.padding = '4px 12px';
-          el.style.borderRadius = '12px';
-          el.style.fontWeight = '600';
-          el.style.display = 'inline-block';
-          el.style.fontSize = '0.8rem';
-          el.style.border = '1px solid rgba(255, 165, 0, 0.2)';
+          el.style.fontWeight = '700';
         } else if (text === 'Đã chốt dịch vụ') {
-          el.style.backgroundColor = 'rgba(40, 167, 69, 0.12)';
           el.style.color = '#28a745';
-          el.style.padding = '4px 12px';
-          el.style.borderRadius = '12px';
-          el.style.fontWeight = '600';
-          el.style.display = 'inline-block';
-          el.style.fontSize = '0.8rem';
-          el.style.border = '1px solid rgba(40, 167, 69, 0.2)';
+          el.style.fontWeight = '700';
         }
       }
     });

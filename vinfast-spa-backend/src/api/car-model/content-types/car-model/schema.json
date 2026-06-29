@@ -24,6 +24,10 @@
     "order": {
       "type": "integer",
       "default": 0
+    },
+    "isHot": {
+      "type": "boolean",
+      "default": false
     }
   }
 }
