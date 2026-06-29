@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "blogs",
+  "info": {
+    "singularName": "blog",
+    "pluralName": "blogs",
+    "displayName": "Bài Viết",
+    "description": "Bài viết cẩm nang chia sẻ kinh nghiệm chăm sóc xe"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
+    },
+    "cover": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "content": {
+      "type": "blocks"
+    },
+    "seoTitle": {
+      "type": "string"
+    },
+    "seoDesc": {
+      "type": "text"
+    }
+  }
+}

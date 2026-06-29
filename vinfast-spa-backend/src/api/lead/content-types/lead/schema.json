@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "leads",
+  "info": {
+    "singularName": "lead",
+    "pluralName": "leads",
+    "displayName": "Đăng Ký Tư Vấn",
+    "description": "Danh sách khách hàng đăng ký nhận tư vấn từ website"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "phone": {
+      "type": "string",
+      "required": true
+    },
+    "serviceName": {
+      "type": "string",
+      "required": true
+    },
+    "carName": {
+      "type": "string",
+      "required": true
+    },
+    "leadStatus": {
+      "type": "enumeration",
+      "enum": [
+        "Chưa liên hệ",
+        "Đã tư vấn",
+        "Đã chốt dịch vụ"
+      ],
+      "default": "Chưa liên hệ"
+    }
+  }
+}

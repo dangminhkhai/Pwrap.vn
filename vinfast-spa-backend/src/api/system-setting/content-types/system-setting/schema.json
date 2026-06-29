@@ -1,0 +1,24 @@
+{
+  "kind": "singleType",
+  "collectionName": "system_settings",
+  "info": {
+    "singularName": "system-setting",
+    "pluralName": "system-settings",
+    "displayName": "Cấu Hình Hệ Thống",
+    "description": "Cấu hình gửi nhận thông báo, Telegram Bot, Email và các dịch vụ khác"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "notificationEmail": {
+      "type": "string"
+    },
+    "telegramBotToken": {
+      "type": "string"
+    },
+    "telegramChatId": {
+      "type": "string"
+    }
+  }
+}

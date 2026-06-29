@@ -1,0 +1,2135 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VinFast Auto Spa - Hệ Thống Quản Trị & Giao Diện Khách Hàng</title>
+    <!-- Google Fonts hỗ trợ Tiếng Việt -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* ĐÊM (MẶC ĐỊNH) */
+        :root {
+            --bg-color: #08080a;
+            --card-bg: rgba(20, 20, 25, 0.85);
+            --border-color: rgba(255, 255, 255, 0.06);
+            --primary: #ff6a00;
+            --primary-light: #ff9100;
+            --primary-glow: rgba(255, 106, 0, 0.15);
+            --text-main: #f5f5f7;
+            --text-muted: #a1a1a6;
+            --accent: #ffb700;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        /* NGÀY (LIGHT MODE) */
+        body.light-mode {
+            --bg-color: #f5f5f7;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --border-color: rgba(0, 0, 0, 0.08);
+            --text-main: #1d1d1f;
+            --text-muted: #86868b;
+            --primary-glow: rgba(255, 106, 0, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            transition: background-color 0.3s, border-color 0.3s, color 0.2s;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 106, 0, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 183, 0, 0.03) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        /* Yêu cầu: Tiêu đề thì màu cam */
+        h1, h2, h3, h4, 
+        .section-title, 
+        .service-title, 
+        .detail-title, 
+        .blog-title {
+            color: var(--primary-light) !important;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.25rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(8, 8, 10, 0.85);
+        }
+
+        body.light-mode header {
+            background: rgba(245, 245, 247, 0.85);
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-light) 30%, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .logo span {
+            color: var(--accent);
+            -webkit-text-fill-color: var(--accent);
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-light);
+        }
+
+        /* Nút thay đổi giao diện ngày đêm */
+        .btn-theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-theme-toggle:hover {
+            background: rgba(255, 106, 0, 0.1);
+            color: var(--primary-light);
+        }
+
+        .btn-admin-toggle {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: #08080a;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-admin-toggle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px var(--primary-glow);
+        }
+
+        /* VIEW CONTAINER */
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem;
+        }
+
+        .view-section {
+            display: none;
+        }
+
+        .view-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* HERO SECTION */
+        .hero {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* CAR TABS */
+        .car-selector-container {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .car-tabs {
+            display: flex;
+            gap: 0.75rem;
+            overflow-x: auto;
+            padding-bottom: 0.75rem;
+        }
+
+        .car-tab {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 0.9rem 1.8rem;
+            border-radius: 16px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            min-width: 130px;
+        }
+
+        .car-tab:hover {
+            border-color: rgba(255, 106, 0, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .car-tab.active {
+            background: linear-gradient(135deg, var(--primary), rgba(255, 106, 0, 0.3));
+            border-color: var(--primary-light);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .car-tab .car-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-main);
+        }
+
+        .car-tab.active .car-name {
+            color: white;
+        }
+
+        .car-tab .car-segment {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.2;
+        }
+
+        .car-tab.active .car-segment {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* SERVICE CARDS GRID */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 106, 0, 0.3);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        .service-image-container {
+            position: relative;
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+            background: #121216;
+        }
+
+        .service-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .car-tag-on-image {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(8, 8, 10, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: white;
+        }
+
+        .service-content {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .service-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .service-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .price-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        body.light-mode .price-value {
+            color: var(--primary);
+        }
+
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .btn-action:hover {
+            background: var(--primary-light);
+        }
+
+        /* BLOG SECTION ON HOME PAGE */
+        .blog-home-section {
+            margin-top: 5rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 4rem;
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .blog-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 106, 0, 0.3);
+        }
+
+        .blog-cover-container {
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            background: #121216;
+        }
+
+        .blog-cover {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .blog-content {
+            padding: 1.25rem;
+        }
+
+        .blog-excerpt {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        /* SERVICE DETAIL VIEW */
+        .detail-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        .detail-hero-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        @media (max-width: 900px) {
+            .detail-hero-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .detail-img-wrapper {
+            position: relative;
+            aspect-ratio: 4 / 3;
+            background: #121216;
+        }
+
+        .detail-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .detail-info-pane {
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .btn-back {
+            background: none;
+            border: none;
+            color: var(--primary-light);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            align-self: flex-start;
+        }
+
+        .detail-price-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            padding: 1.25rem;
+            border-radius: 16px;
+            margin: 1.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        body.light-mode .detail-price-box {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .detail-price-val {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        body.light-mode .detail-price-val {
+            color: var(--primary);
+        }
+
+        .detail-body-content {
+            padding: 2.5rem;
+        }
+
+        .rich-text-content {
+            line-height: 1.8;
+            color: var(--text-main);
+            font-size: 1.05rem;
+        }
+
+        .rich-text-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .rich-text-content h3 {
+            margin: 1.5rem 0 0.75rem;
+        }
+
+        /* Gallery in Rich Text */
+        .content-gallery {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .gallery-item {
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 16 / 10;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            margin: 2rem 0;
+            background: #000;
+        }
+
+        .video-container iframe, .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* ADMIN DASHBOARD LAYOUT */
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 2rem;
+            min-height: 75vh;
+        }
+
+        @media (max-width: 900px) {
+            .admin-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .admin-nav {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-self: start;
+        }
+
+        .admin-nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .admin-nav-btn:hover, .admin-nav-btn.active {
+            color: var(--primary-light);
+            background: rgba(255, 106, 0, 0.08);
+        }
+
+        .admin-content-area {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2rem;
+        }
+
+        /* Admin Management Lists */
+        .admin-table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .admin-table th, .admin-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .admin-table th {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .admin-table td {
+            font-size: 0.95rem;
+        }
+
+        .admin-action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 6px;
+        }
+
+        .admin-action-btn.edit { color: var(--primary-light); }
+        .admin-action-btn.delete { color: var(--danger); }
+        
+        .admin-action-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Form Layouts */
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* TABS CHO FORM CHỈNH SỬA DỊCH VỤ (Tối ưu hóa mới) */
+        .form-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .form-tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .form-tab-btn.active {
+            color: var(--primary-light);
+            background: rgba(255, 106, 0, 0.08);
+            border: 1px solid var(--primary);
+        }
+
+        .form-tab-panel {
+            display: none;
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        .form-tab-panel.active {
+            display: block;
+        }
+
+        /* DANH SÁCH XE HÀNG LOẠT TRONG TRANG EDIT (Tối ưu hóa mới) */
+        .car-versions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .car-version-row {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.25rem;
+            display: grid;
+            grid-template-columns: 150px 180px 100px 1fr;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        body.light-mode .car-version-row {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .car-version-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        .car-version-name {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .car-version-img {
+            width: 100px;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Rich Content Editor Simulator */
+        .rich-editor-simulator {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: rgba(0,0,0,0.2);
+            padding: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .editor-btn-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .editor-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.35rem 0.65rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        .editor-btn:hover {
+            background: var(--primary-glow);
+            border-color: var(--primary);
+        }
+
+        .multi-image-previews {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .gallery-preview-item {
+            position: relative;
+            aspect-ratio: 4/3;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .gallery-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .btn-delete-gallery-img {
+            position: absolute;
+            top: 0.25rem;
+            right: 0.25rem;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        /* SEO & AEO Settings Accordion */
+        .seo-accordion {
+            border: 1px solid rgba(255, 183, 0, 0.15);
+            border-radius: 12px;
+            background: rgba(255, 183, 0, 0.02);
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+        }
+
+        .seo-accordion-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(15, 15, 18, 0.95);
+            border: 1px solid var(--primary);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            transform: translateY(150%);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+        }
+
+        .toast-icon {
+            color: var(--primary-light);
+        }
+
+        /* Form Inputs Light Mode fix */
+        body.light-mode .form-input, 
+        body.light-mode .form-select, 
+        body.light-mode .form-textarea {
+            background: rgba(255, 255, 255, 0.8);
+            color: #1d1d1f;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo" id="headerLogo">
+            <i data-lucide="shield-check" style="color: var(--primary-light)"></i>
+            VINFAST<span>SPA</span>
+        </div>
+        <div class="header-nav">
+            <a class="nav-link active" id="navHome">Trang Chủ</a>
+            <a class="nav-link" id="navBlog">Bài Viết</a>
+            <!-- Nút Thay đổi giao diện Ngày / Đêm -->
+            <button class="btn-theme-toggle" id="btnThemeToggle" title="Thay đổi giao diện Ngày/Đêm">
+                <i data-lucide="sun" id="themeIcon"></i>
+            </button>
+            <button class="btn-admin-toggle" id="btnGoAdmin">
+                <i data-lucide="lock" style="width:16px;"></i>
+                Trang Admin (CMS)
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- ============================================== -->
+        <!-- VIEW 1: TRANG CHỦ DỊCH VỤ (KHÁCH HÀNG) -->
+        <!-- ============================================== -->
+        <div id="viewHome" class="view-section active">
+            <section class="hero">
+                <h1>Cá Nhân Hóa Dịch Vụ Cho <span>Từng Dòng Xe VinFast</span></h1>
+                <p>Chọn dòng xe của bạn để xem hình ảnh thực tế và bảng giá được tối ưu hóa chuẩn xác nhất.</p>
+            </section>
+
+            <div class="car-selector-container">
+                <h2 class="section-title">
+                    <i data-lucide="car" style="width: 20px; color: var(--primary-light)"></i>
+                    Bước 1: Chọn dòng xe của bạn
+                </h2>
+                <div class="car-tabs" id="carTabs">
+                    <!-- Tabs xe kết xuất bởi JS -->
+                </div>
+            </div>
+
+            <h2 class="section-title">
+                <i data-lucide="wrench" style="width: 20px; color: var(--primary-light)"></i>
+                Bước 2: Các gói dịch vụ khuyên dùng
+            </h2>
+            <div class="services-grid" id="servicesGrid">
+                <!-- Danh sách dịch vụ xe kết xuất bởi JS -->
+            </div>
+
+            <!-- Bài viết nổi bật ở trang chủ -->
+            <section class="blog-home-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h2 class="section-title" style="margin-bottom: 0;">
+                        <i data-lucide="book-open" style="width: 20px; color: var(--primary-light)"></i>
+                        Cẩm nang & Tư vấn chăm sóc xe
+                    </h2>
+                    <a class="nav-link" id="linkAllBlogs" style="display: flex; align-items: center; gap: 0.25rem;">
+                        Xem tất cả bài viết <i data-lucide="chevron-right" style="width:16px;"></i>
+                    </a>
+                </div>
+                <div class="blog-grid" id="blogGridHome">
+                    <!-- Danh sách bài viết -->
+                </div>
+            </section>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- VIEW 2: TRANG TOÀN BỘ BÀI VIẾT (BLOG LIST) -->
+        <!-- ============================================== -->
+        <div id="viewBlogList" class="view-section">
+            <section class="hero" style="margin-bottom: 2.5rem;">
+                <h1>Góc Chia Sẻ <span>Kinh Nghiệm</span></h1>
+                <p>Tổng hợp các bài viết hướng dẫn, đánh giá xe và cách duy trì tối ưu vẻ đẹp cho xe VinFast của bạn.</p>
+            </section>
+            <div class="blog-grid" id="blogGridFull">
+                <!-- Danh sách bài viết đầy đủ -->
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- VIEW 3: TRANG CHI TIẾT DỊCH VỤ -->
+        <!-- ============================================== -->
+        <div id="viewServiceDetail" class="view-section">
+            <div class="detail-container" id="serviceDetailContent">
+                <!-- Nội dung trang chi tiết tạo động bởi JS -->
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- VIEW 4: TRANG CHI TIẾT BÀI VIẾT (BLOG DETAIL) -->
+        <!-- ============================================== -->
+        <div id="viewBlogDetail" class="view-section">
+            <div class="detail-container" style="padding: 3rem; max-width: 900px; margin: 0 auto;">
+                <button class="btn-back" id="btnBackToBlogs">
+                    <i data-lucide="arrow-left" style="width: 16px;"></i> Quay lại danh sách
+                </button>
+                <div id="blogDetailContent">
+                    <!-- Nội dung bài viết tạo động -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- VIEW 5: HỆ THỐNG QUẢN TRỊ ADMIN (CMS) -->
+        <!-- ============================================== -->
+        <div id="viewAdmin" class="view-section">
+            <div class="admin-layout">
+                <!-- Sidebar Admin -->
+                <div class="admin-nav">
+                    <button class="admin-nav-btn active" id="adminMenuServices">
+                        <i data-lucide="wrench" style="width: 16px;"></i> Quản lý Dịch Vụ
+                    </button>
+                    <button class="admin-nav-btn" id="adminMenuBlogs">
+                        <i data-lucide="file-text" style="width: 16px;"></i> Quản lý Bài Viết
+                    </button>
+                    <button class="admin-nav-btn" id="btnExitAdmin" style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1rem; color: var(--danger);">
+                        <i data-lucide="log-out" style="width: 16px;"></i> Thoát Admin
+                    </button>
+                </div>
+
+                <!-- Content Area Admin -->
+                <div class="admin-content-area">
+                    
+                    <!-- TAB 1: QUẢN LÝ DỊCH VỤ -->
+                    <div id="adminTabServices" class="admin-tab-content" style="display: block;">
+                        <div class="admin-table-header">
+                            <h2 style="font-size: 1.5rem;">Danh sách Dịch Vụ ô tô</h2>
+                            <button class="btn-action" id="btnShowAddServiceForm">
+                                <i data-lucide="plus-circle" style="width:16px;"></i> Thêm Dịch Vụ Mới
+                            </button>
+                        </div>
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Tên dịch vụ</th>
+                                    <th>Mô tả ngắn</th>
+                                    <th>Số xe áp dụng</th>
+                                    <th style="text-align: right;">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminServicesTableBody">
+                                <!-- Kết xuất bởi JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- TAB 2: QUẢN LÝ BÀI VIẾT -->
+                    <div id="adminTabBlogs" class="admin-tab-content" style="display: none;">
+                        <div class="admin-table-header">
+                            <h2 style="font-size: 1.5rem;">Danh sách Bài viết (SEO & AEO)</h2>
+                            <button class="btn-action" id="btnShowAddBlogForm">
+                                <i data-lucide="plus-circle" style="width:16px;"></i> Viết Bài Mới
+                            </button>
+                        </div>
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Tiêu đề bài viết</th>
+                                    <th>Đường dẫn (Slug)</th>
+                                    <th>Trạng thái</th>
+                                    <th style="text-align: right;">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminBlogsTableBody">
+                                <!-- Kết xuất bởi JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- FORM 1: SOẠN THẢO / CHỈNH SỬA DỊCH VỤ (ĐÃ TỐI ƯU HÓA RẤT DỄ SỬ DỤNG) -->
+                    <div id="adminFormService" style="display: none;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <button class="btn-back" id="btnBackToServicesList" style="margin-bottom: 0;">
+                                <i data-lucide="arrow-left" style="width: 16px;"></i> Quay lại danh sách
+                            </button>
+                            <h2 id="serviceFormTitle" style="font-size: 1.4rem; color: var(--primary-light);">Cập nhật Dịch Vụ</h2>
+                        </div>
+
+                        <!-- THANH TABS TRANG SỬA DỊCH VỤ -->
+                        <div class="form-tabs">
+                            <button class="form-tab-btn active" onclick="switchFormTab('formTabContent')">1. Nội dung bài viết & SEO</button>
+                            <button class="form-tab-btn" onclick="switchFormTab('formTabMedia')">2. Thư viện Ảnh & Video</button>
+                            <button class="form-tab-btn" onclick="switchFormTab('formTabCars')">3. Cấu hình Giá & Ảnh từng dòng xe</button>
+                        </div>
+                        
+                        <!-- TAB PANEL 1: NỘI DUNG VÀ SEO -->
+                        <div id="formTabContent" class="form-tab-panel active">
+                            <div class="form-group">
+                                <label>Tên dịch vụ</label>
+                                <input type="text" class="form-input" id="editServiceName" placeholder="Ví dụ: Phủ Ceramic Diamond">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Mô tả ngắn hiển thị ở trang chủ (Tối đa 2 dòng)</label>
+                                <textarea class="form-textarea" id="editServiceDesc" placeholder="Mô tả ngắn gọn thu hút khách hàng..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Bài viết giới thiệu chi tiết dịch vụ (Soạn thảo nội dung)</label>
+                                <div class="rich-editor-simulator">
+                                    <div class="editor-btn-group">
+                                        <button class="editor-btn" onclick="insertEditorTag('h3')">+ Thêm Tiêu Đề Phụ (H3)</button>
+                                        <button class="editor-btn" onclick="insertEditorTag('p')">+ Thêm Đoạn Văn Bản</button>
+                                    </div>
+                                    <textarea class="form-textarea" id="editServiceRichText" style="min-height: 250px; font-family: monospace;" placeholder="Viết nội dung giới thiệu chi tiết dịch vụ ở đây..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- CẤU HÌNH SEO & AEO -->
+                            <div class="seo-accordion">
+                                <div class="seo-accordion-header">
+                                    <i data-lucide="search" style="width: 18px;"></i>
+                                    Tối ưu hóa công cụ tìm kiếm (Google & AI Search)
+                                </div>
+                                <div class="form-group">
+                                    <label>Tiêu đề tối ưu SEO (SEO Title)</label>
+                                    <input type="text" class="form-input" id="editServiceSeoTitle">
+                                </div>
+                                <div class="form-group">
+                                    <label>Mô tả tối ưu SEO (Meta Description)</label>
+                                    <textarea class="form-textarea" id="editServiceSeoDesc"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB PANEL 2: THƯ VIỆN ẢNH VÀ VIDEO -->
+                        <div id="formTabMedia" class="form-tab-panel">
+                            <div class="form-group">
+                                <label>Thư viện hình ảnh chi tiết (Nhiều ảnh hiển thị slide ở trang chi tiết)</label>
+                                <div class="file-upload-wrapper" style="margin-bottom: 1rem;">
+                                    <label class="btn-file-upload">
+                                        <i data-lucide="image" style="width:16px;"></i> Tải thêm nhiều ảnh từ máy tính...
+                                        <input type="file" id="editServiceGalleryFiles" accept="image/*" multiple>
+                                    </label>
+                                </div>
+                                <label>Danh sách ảnh trong thư viện (Bấm dấu X đỏ để xóa ảnh):</label>
+                                <div class="multi-image-previews" id="editServiceGalleryPreviews"></div>
+                            </div>
+
+                            <div class="form-group" style="margin-top: 2rem;">
+                                <label>Mã nhúng Video thực tế (Youtube iframe)</label>
+                                <input type="text" class="form-input" id="editServiceVideoUrl" placeholder="Ví dụ: https://www.youtube.com/embed/tên_video">
+                            </div>
+                        </div>
+
+                        <!-- TAB PANEL 3: CẤU HÌNH XE HÀNG LOẠT (CỰC KỲ TIỆN LỢI) -->
+                        <div id="formTabCars" class="form-tab-panel">
+                            <div style="margin-bottom: 1.5rem;">
+                                <p style="font-size:0.9rem; color: var(--text-muted);">Hệ thống hiển thị danh sách tất cả các dòng xe của VinFast. Bạn có thể nhập giá tiền riêng và chọn ảnh riêng cho từng dòng xe trực quan tại đây mà không cần đổi từng dòng xe.</p>
+                            </div>
+                            <div class="car-versions-list" id="carVersionsListContainer">
+                                <!-- Danh sách phiên bản xe sẽ được kết xuất động hàng loạt bởi JS -->
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 3rem; border-top: 1px solid var(--border-color); padding-top: 2rem;">
+                            <button class="btn-save" id="btnSaveMainService" style="padding: 1.1rem; font-size:1.05rem;">
+                                <i data-lucide="save" style="width:20px;"></i> LƯU HOÀN TẤT DỊCH VỤ
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- FORM 2: VIẾT BÀI / CHỈNH SỬA BÀI VIẾT (BLOG) -->
+                    <div id="adminFormBlog" style="display: none;">
+                        <button class="btn-back" id="btnBackToBlogsList">
+                            <i data-lucide="arrow-left" style="width: 16px;"></i> Quay lại danh sách
+                        </button>
+                        <h2 id="blogFormTitle" style="font-size: 1.5rem; margin-bottom: 1.5rem;">Viết Bài Mới</h2>
+
+                        <div class="form-group">
+                            <label>Tiêu đề bài viết</label>
+                            <input type="text" class="form-input" id="editBlogTitle" placeholder="Ví dụ: Đánh giá chi tiết dán phim cách nhiệt cho xe VF 3">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Đường dẫn bài viết (Slug)</label>
+                            <input type="text" class="form-input" id="editBlogSlug" placeholder="danh-gia-phim-cach-nhiet-vf3">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ảnh bìa bài viết (Feature Image)</label>
+                            <div class="file-upload-wrapper">
+                                <label class="btn-file-upload">
+                                    <i data-lucide="image" style="width:16px;"></i> Chọn ảnh bìa...
+                                    <input type="file" id="editBlogCoverFile" accept="image/*">
+                                </label>
+                            </div>
+                            <img id="editBlogCoverPreview" class="preview-uploaded-img" src="" alt="Preview" style="max-height: 180px;">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nội dung bài viết (Hỗ trợ viết bài, chèn hình ảnh, video để tối ưu SEO/AEO)</label>
+                            <textarea class="form-textarea" id="editBlogContent" style="min-height: 300px;" placeholder="Viết nội dung bài viết chia sẻ kinh nghiệm ở đây..."></textarea>
+                        </div>
+
+                        <!-- CẤU HÌNH SEO & AEO CHO BÀI VIẾT -->
+                        <div class="seo-accordion">
+                            <div class="seo-accordion-header">
+                                <i data-lucide="brain" style="width: 18px;"></i>
+                                Cấu hình SEO & AEO (Duy trì thứ hạng Tìm kiếm Google & AI Gemini/ChatGPT)
+                            </div>
+                            <div class="form-group">
+                                <label>Tiêu đề tối ưu SEO</label>
+                                <input type="text" class="form-input" id="editBlogSeoTitle">
+                            </div>
+                            <div class="form-group">
+                                <label>Mô tả tối ưu SEO (Meta Description)</label>
+                                <textarea class="form-textarea" id="editBlogSeoDesc"></textarea>
+                            </div>
+                        </div>
+
+                        <button class="btn-save" id="btnSaveBlog" style="padding: 1rem; font-size:1rem;">
+                            <i data-lucide="check" style="width:20px;"></i> LƯU & XUẤT BẢN BÀI VIẾT
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i data-lucide="check-circle" class="toast-icon"></i>
+        <div id="toastMessage">Đã lưu thay đổi thành công!</div>
+    </div>
+
+    <script>
+        // ========================================================
+        // 1. DATA STATE & STORAGE IN LOCALSTORAGE
+        // ========================================================
+        const carModels = [
+            { id: 'vf3', name: 'VinFast VF 3', segment: 'Mini SUV' },
+            { id: 'vf5', name: 'VinFast VF 5', segment: 'A-SUV' },
+            { id: 'vf6', name: 'VinFast VF 6', segment: 'B-SUV' },
+            { id: 'vf7', name: 'VinFast VF 7', segment: 'C-SUV' },
+            { id: 'vf8', name: 'VinFast VF 8', segment: 'D-SUV' },
+            { id: 'vf9', name: 'VinFast VF 9', segment: 'E-SUV' },
+            { id: 'limo_green', name: 'Limo Green', segment: 'Hạng Sang' }
+        ];
+
+        const imageRepo = {
+            default: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80',
+            vf3_blue: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80',
+            vf5_red: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80',
+            vf8_white: 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80',
+            vf9_black: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=800&q=80',
+            limo_green: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80'
+        };
+
+        const defaultServices = [
+            {
+                id: 'phu-ceramic',
+                name: 'Phủ Ceramic Diamond',
+                description: 'Bảo vệ bề mặt sơn bóng bẩy tối đa, kháng nước hiệu ứng lá sen và hạn chế trầy xước dăm.',
+                richText: `
+                    <h3>Công nghệ Phủ Ceramic Diamond là gì?</h3>
+                    <p>Phủ Ceramic Diamond (phủ gốm kim cương) là công nghệ bảo vệ bề mặt sơn ô tô tiên tiến nhất hiện nay. Bằng việc liên kết các hạt nano dioxide silic (SiO2) hoặc titan dioxide (TiO2) siêu nhỏ, lớp phủ sẽ kết tinh thành một màng tinh thể thủy tinh cứng cáp, lấp đầy các lỗ nhỏ li ti trên bề mặt sơn gốc. Lớp màng này đóng vai trò như một "lá chắn thép" bảo vệ chiếc xe điện VinFast của bạn trước mọi tác động xấu từ môi trường.</p>
+
+                    <h3>5 Lợi ích vượt trội khi Phủ Ceramic Diamond</h3>
+                    <p><strong>1. Độ bóng gương (Mirror Effect) đỉnh cao:</strong> Lớp phủ có khả năng khúc xạ ánh sáng cực tốt, tạo chiều sâu và độ bóng loáng như gương cho thân xe. Màu sơn gốc của xe VinFast (như màu xanh dương dương của VF8 hay màu đỏ của VF5) sẽ trở nên rực rỡ và sang trọng hơn.</p>
+                    <p><strong>2. Hiệu ứng lá sen kháng nước mạnh mẽ:</strong> Sức căng bề mặt cực lớn khiến nước và chất lỏng tự động cuộn thành giọt và trôi tuột đi. Nhờ đó bụi bẩn, sình lầy khó bám chặt, giúp bạn rửa xe cực kỳ nhanh chóng và dễ dàng.</p>
+                    <p><strong>3. Kháng trầy xước dăm vượt trội:</strong> Với độ cứng đạt chuẩn 9H+ sau khi liên kết hoàn toàn, lớp phủ Ceramic Diamond giảm thiểu tối đa các vết xước xoáy (xước mạng nhện) do rửa xe sai cách hoặc va quệt nhẹ với cành cây.</p>
+                    <p><strong>4. Chống tia UV và oxy hóa màu sơn:</strong> Khí hậu nắng nóng tại Việt Nam là kẻ thù của sơn xe. Lớp phủ ngăn chặn hoàn toàn tác động từ tia cực tím, ngăn ngừa hiện tượng bạc màu, ố vàng sơn (đặc biệt là các dòng xe màu trắng).</p>
+                    <p><strong>5. Kháng hóa chất và chất ăn mòn:</strong> Bảo vệ sơn xe khỏi tác hại của mưa axit, nhựa đường, phân chim, xác côn trùng và các hóa chất tẩy rửa mạnh.</p>
+
+                    <h3>Quy trình 8 bước Phủ Ceramic Diamond Chuyên Nghiệp</h3>
+                    <p>Tại VinFast Auto Spa, chúng tôi áp dụng quy trình thi công khép kín đạt tiêu chuẩn phòng trưng bày với thời gian từ 24 - 36 giờ:</p>
+                    <p><strong>Bước 1: Nhận xe và đánh giá tổng thể:</strong> Đo độ dày lớp sơn bằng máy chuyên dụng và ghi nhận tình trạng bề mặt.</p>
+                    <p><strong>Bước 2: Vệ sinh chuyên sâu (Detailing Wash):</strong> Rửa xe, tẩy bụi sắt, nhựa đường và tẩy tế bào chết cho sơn bằng đất sét chuyên dụng (Clay bar).</p>
+                    <p><strong>Bước 3: Che chắn bảo vệ:</strong> Dán băng dính che chắn các chi tiết nhựa nhám, kính, cao su và logo để tránh ảnh hưởng trong quá trình đánh bóng.</p>
+                    <p><strong>Bước 4: Hiệu chỉnh bề mặt sơn (Paint Correction):</strong> Đánh bóng 2-3 bước bằng máy quét chuyên dụng để xóa hoàn toàn xước dăm, xước xoáy, trả lại bề mặt phẳng mịn tuyệt đối.</p>
+                    <p><strong>Bước 5: Khử dầu bề mặt sơn:</strong> Lau dung dịch chuyên dụng IPA để loại bỏ hoàn toàn dầu đánh bóng còn sót lại, đảm bảo liên kết tốt nhất cho Ceramic.</p>
+                    <p><strong>Bước 6: Thi công phủ Ceramic Diamond lớp 1:</strong> Thoa đều dung dịch Ceramic bằng pad chuyên dụng lên từng vùng nhỏ, đợi dung dịch liên kết và lau sạch bằng khăn microfiber siêu mềm.</p>
+                    <p><strong>Bước 7: Sấy khô bằng đèn hồng ngoại:</strong> Sấy nhiệt độ cao từ 60-80 độ C giúp lớp gốm liên kết nhanh và đạt độ cứng tối đa ngay trong phòng thi công.</p>
+                    <p><strong>Bước 8: Thi công lớp phủ Top Coat bảo vệ & Nghiệm thu:</strong> Phủ lớp khóa bóng tăng cường khả năng kháng nước và tiến hành kiểm tra dưới ánh sáng phòng sơn trước khi bàn giao xe.</p>
+
+                    <h3>Tối ưu hóa AEO - Câu hỏi thường gặp khi phủ Ceramic cho xe VinFast</h3>
+                    <p><strong>Q: Xe điện VinFast mới mua có cần phủ Ceramic không?</strong><br>
+                    A: Rất cần thiết. Sơn xe mới xuất xưởng thường rất mềm và chưa có lớp bảo vệ. Phủ ngay từ đầu giúp khóa chặt lớp sơn bóng nguyên bản đẹp nhất và bảo vệ xe tối đa trước các tác nhân gây xước dăm ngay từ những km đầu tiên.</p>
+                    <p><strong>Q: Phủ Ceramic Diamond có thời gian bảo hành bao lâu?</strong><br>
+                    A: Gói Ceramic Diamond tại gara của chúng tôi được áp dụng chế độ bảo hành điện tử 5 năm. Mỗi 6 tháng, quý khách sẽ được bảo dưỡng, phủ dặm hoàn toàn miễn phí để duy trì độ bóng và hiệu ứng kháng nước.</p>
+                `,
+                gallery: [
+                    'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80',
+                    'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80',
+                    'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=800&q=80'
+                ],
+                videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                seoTitle: 'Phủ Ceramic Diamond Xe VinFast VF3 VF5 VF8 VF9 Đỉnh Cao',
+                seoDesc: 'Dịch vụ phủ Ceramic Diamond công nghệ Đức cho xe điện VinFast. Bảo vệ màu sơn chống xước dăm vượt trội, bảo hành 5 năm tại spa.'
+            },
+            {
+                id: 'dan-phim',
+                name: 'Dán Phim Cách Nhiệt 3M',
+                description: 'Cản 99% tia cực tím UV, chống nóng vượt trội, bảo vệ nội thất và tạo sự riêng tư.',
+                richText: `<h3>Hiệu quả cách nhiệt vượt trội</h3><p>Dán phim cách nhiệt 3M chính hãng giúp cản 99% tia cực tím và tia hồng ngoại, bảo vệ da và hệ thống thiết bị điện tử thông minh trong xe điện.</p>`,
+                gallery: [
+                    'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80'
+                ],
+                videoUrl: '',
+                seoTitle: 'Dán Phim Cách Nhiệt 3M Cho Xe VinFast | Giảm Nhiệt 99%',
+                seoDesc: 'Dán phim cách nhiệt 3M Crystalline chính hãng cho xe Vinfast giúp mát mẻ và tiết kiệm điện năng điều hòa.'
+            }
+        ];
+
+        const defaultBlogs = [
+            {
+                id: 'huong-dan-cham-soc-pin-xe-dien',
+                title: 'Hướng dẫn sạc pin và bảo vệ pin xe điện VinFast bền lâu',
+                slug: 'huong-dan-cham-soc-pin-xe-dien',
+                cover: 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80',
+                content: '<p>Để pin xe điện VinFast hoạt động bền bỉ, bạn nên duy trì dung lượng pin từ 20% đến 80%. Không nên thường xuyên để pin cạn kiệt về 0% hoặc cắm sạc nhanh liên tục khi nhiệt độ ngoài trời quá cao...</p>',
+                seoTitle: 'Mẹo sạc pin xe điện VinFast bền lâu nhất từ chuyên gia',
+                seoDesc: 'Chia sẻ các thói quen tốt giúp duy trì tuổi thọ pin xe VinFast VF3, VF5, VF8 hiệu quả.'
+            },
+            {
+                id: 'so-sanh-phu-ceramic-va-dan-ppf',
+                title: 'Nên phủ Ceramic hay dán phim bảo vệ PPF cho xe VinFast?',
+                slug: 'so-sanh-phu-ceramic-va-dan-ppf',
+                cover: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=800&q=80',
+                content: '<p>Phủ Ceramic giúp tạo độ bóng tối đa và hiệu ứng lá sen kháng nước, trong khi dán PPF là giải pháp chống va đập và chống trầy xước vật lý tuyệt vời nhất. Nếu bạn di chuyển nhiều trong thành phố chật chội, PPF sẽ là lựa chọn phù hợp hơn...</p>',
+                seoTitle: 'So sánh phủ Ceramic và dán PPF cho xe VinFast',
+                seoDesc: 'Phân tích chi tiết ưu nhược điểm của phủ Ceramic và dán PPF cho dòng xe ô tô điện.'
+            }
+        ];
+
+        const defaultRelations = {
+            'vf3': {
+                'phu-ceramic': { price: 4500000, image: imageRepo.vf3_blue },
+                'dan-phim': { price: 5500000, image: imageRepo.vf3_blue }
+            },
+            'vf5': {
+                'phu-ceramic': { price: 6000000, image: imageRepo.vf5_red },
+                'dan-phim': { price: 7000000, image: imageRepo.vf5_red }
+            },
+            'vf8': {
+                'phu-ceramic': { price: 9500000, image: imageRepo.vf8_white },
+                'dan-phim': { price: 11000000, image: imageRepo.vf8_white }
+            }
+        };
+
+        function getStorageData(key, defaultValue) {
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : defaultValue;
+        }
+
+        // Tăng phiên bản key lên v4 để đồng bộ cấu trúc mới hoàn chỉnh
+        let services = getStorageData('vf_services_v4', defaultServices);
+        let blogs = getStorageData('vf_blogs_v4', defaultBlogs);
+        let relations = getStorageData('vf_relations_v4', defaultRelations);
+
+        function saveAllToLocalStorage() {
+            localStorage.setItem('vf_services_v4', JSON.stringify(services));
+            localStorage.setItem('vf_blogs_v4', JSON.stringify(blogs));
+            localStorage.setItem('vf_relations_v4', JSON.stringify(relations));
+        }
+
+        // ========================================================
+        // 2. THEME TOGGLE (NGÀY / ĐÊM)
+        // ========================================================
+        const btnThemeToggle = document.getElementById('btnThemeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-mode');
+            themeIcon.setAttribute('data-lucide', 'moon');
+        } else {
+            themeIcon.setAttribute('data-lucide', 'sun');
+        }
+
+        btnThemeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            
+            themeIcon.setAttribute('data-lucide', isLight ? 'moon' : 'sun');
+            lucide.createIcons();
+        });
+
+        // ========================================================
+        // 3. PHẦN HÀNH XỬ CHUYỂN ĐỔI GIAO DIỆN (ROUTING)
+        // ========================================================
+        const views = {
+            home: document.getElementById('viewHome'),
+            blogList: document.getElementById('viewBlogList'),
+            serviceDetail: document.getElementById('viewServiceDetail'),
+            blogDetail: document.getElementById('viewBlogDetail'),
+            admin: document.getElementById('viewAdmin')
+        };
+
+        function switchView(viewName) {
+            Object.keys(views).forEach(key => {
+                if (key === viewName) {
+                    views[key].classList.add('active');
+                } else {
+                    views[key].classList.remove('active');
+                }
+            });
+
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            if (viewName === 'home') document.getElementById('navHome').classList.add('active');
+            if (viewName === 'blogList') document.getElementById('navBlog').classList.add('active');
+        }
+
+        document.getElementById('navHome').addEventListener('click', () => switchView('home'));
+        document.getElementById('navBlog').addEventListener('click', () => {
+            renderBlogList();
+            switchView('blogList');
+        });
+        document.getElementById('linkAllBlogs').addEventListener('click', () => {
+            renderBlogList();
+            switchView('blogList');
+        });
+        document.getElementById('headerLogo').addEventListener('click', () => switchView('home'));
+        document.getElementById('btnGoAdmin').addEventListener('click', () => {
+            renderAdminDashboard();
+            switchView('admin');
+        });
+        document.getElementById('btnExitAdmin').addEventListener('click', () => switchView('home'));
+        document.getElementById('btnBackToBlogs').addEventListener('click', () => switchView('blogList'));
+
+        // ========================================================
+        // 4. XỬ LÝ TRANG CHỦ & DANH SÁCH DỊCH VỤ / XE
+        // ========================================================
+        const carTabsContainer = document.getElementById('carTabs');
+        const servicesGrid = document.getElementById('servicesGrid');
+        const blogGridHome = document.getElementById('blogGridHome');
+        let selectedCarId = 'vf3';
+
+        function renderHomePage() {
+            carTabsContainer.innerHTML = '';
+            carModels.forEach(car => {
+                const tab = document.createElement('button');
+                tab.className = `car-tab ${car.id === selectedCarId ? 'active' : ''}`;
+                tab.dataset.id = car.id;
+                tab.innerHTML = `
+                    <span class="car-name">${car.name}</span>
+                    <span class="car-segment">${car.segment}</span>
+                `;
+                tab.addEventListener('click', () => {
+                    selectedCarId = car.id;
+                    document.querySelectorAll('.car-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    renderServicesForSelectedCar();
+                });
+                carTabsContainer.appendChild(tab);
+            });
+
+            renderServicesForSelectedCar();
+            renderBlogHome();
+        }
+
+        function getRelation(carId, serviceId) {
+            if (relations[carId] && relations[carId][serviceId]) {
+                return relations[carId][serviceId];
+            }
+            return null;
+        }
+
+        function renderServicesForSelectedCar() {
+            servicesGrid.innerHTML = '';
+            const currentCar = carModels.find(c => c.id === selectedCarId);
+
+            services.forEach(service => {
+                const config = getRelation(selectedCarId, service.id);
+                
+                if (config) {
+                    const card = document.createElement('div');
+                    card.className = 'service-card';
+                    card.innerHTML = `
+                        <div class="service-image-container">
+                            <img src="${config.image}" alt="${service.name}" class="service-image">
+                            <div class="car-tag-on-image">
+                                <i data-lucide="sparkles" style="width: 14px; color: var(--primary-light)"></i>
+                                Dành riêng cho ${currentCar.name}
+                            </div>
+                        </div>
+                        <div class="service-content">
+                            <h3 class="service-title">${service.name}</h3>
+                            <p class="service-desc">${service.description}</p>
+                            <div class="service-footer">
+                                <div class="price-container">
+                                    <span class="price-label" style="font-size:0.75rem; color:var(--text-muted)">Giá trọn gói</span>
+                                    <span class="price-value">${parseInt(config.price).toLocaleString('vi-VN')} đ</span>
+                                </div>
+                                <button class="btn-action" onclick="openDetailPage('${service.id}', '${selectedCarId}')">
+                                    Xem chi tiết
+                                    <i data-lucide="arrow-right" style="width: 14px;"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    servicesGrid.appendChild(card);
+                }
+            });
+            lucide.createIcons();
+        }
+
+        function renderBlogHome() {
+            blogGridHome.innerHTML = '';
+            const latestBlogs = blogs.slice(0, 3);
+            latestBlogs.forEach(blog => {
+                const card = document.createElement('div');
+                card.className = 'blog-card';
+                card.innerHTML = `
+                    <div class="blog-cover-container">
+                        <img src="${blog.cover}" alt="${blog.title}" class="blog-cover">
+                    </div>
+                    <div class="blog-content">
+                        <h3 class="blog-title">${blog.title}</h3>
+                        <p class="blog-excerpt">${blog.seoDesc || 'Đọc bài viết chia sẻ chi tiết...'}</p>
+                    </div>
+                `;
+                card.addEventListener('click', () => showBlogDetail(blog.id));
+                blogGridHome.appendChild(card);
+            });
+        }
+
+        // ========================================================
+        // 5. XỬ LÝ XEM CHI TIẾT DỊCH VỤ & BÀI VIẾT (BLOG)
+        // ========================================================
+        const detailContainer = document.getElementById('serviceDetailContent');
+
+        function openDetailPage(serviceId, carId) {
+            const service = services.find(s => s.id === serviceId);
+            const car = carModels.find(c => c.id === carId);
+            const config = getRelation(carId, serviceId);
+
+            if (!service || !car || !config) return;
+
+            // Xây dựng hình ảnh thư viện (nhiều ảnh) nếu có
+            let galleryHtml = '';
+            if (service.gallery && service.gallery.length > 0) {
+                galleryHtml = `<div class="content-gallery">`;
+                service.gallery.forEach(imgUrl => {
+                    galleryHtml += `
+                        <div class="gallery-item">
+                            <img src="${imgUrl}" alt="Hình ảnh chi tiết dịch vụ">
+                        </div>
+                    `;
+                });
+                galleryHtml += `</div>`;
+            }
+
+            // Xây dựng video nếu có
+            let videoHtml = '';
+            if (service.videoUrl) {
+                videoHtml = `
+                    <h3 class="detail-section-h3" style="font-size: 1.4rem; color: var(--primary-light); border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 2rem;">Video thực tế thi công</h3>
+                    <div class="video-container">
+                        <iframe src="${service.videoUrl}" allowfullscreen></iframe>
+                    </div>
+                `;
+            }
+
+            // Tìm các dịch vụ cùng dòng xe khác (Yêu cầu của bạn)
+            let relatedServicesHtml = '';
+            services.forEach(s => {
+                if (s.id !== serviceId) {
+                    const relatedConfig = getRelation(carId, s.id);
+                    if (relatedConfig) {
+                        relatedServicesHtml += `
+                            <div class="service-card">
+                                <div class="service-image-container">
+                                    <img src="${relatedConfig.image}" alt="${s.name}" class="service-image">
+                                    <div class="car-tag-on-image">
+                                        <i data-lucide="sparkles" style="width: 14px; color: var(--primary-light)"></i>
+                                        Dành riêng cho ${car.name}
+                                    </div>
+                                </div>
+                                <div class="service-content">
+                                    <h3 class="service-title">${s.name}</h3>
+                                    <p class="service-desc">${s.description}</p>
+                                    <div class="service-footer">
+                                        <div class="price-container">
+                                            <span class="price-label" style="font-size:0.75rem; color:var(--text-muted)">Giá trọn gói</span>
+                                            <span class="price-value">${parseInt(relatedConfig.price).toLocaleString('vi-VN')} đ</span>
+                                        </div>
+                                        <button class="btn-action" onclick="openDetailPage('${s.id}', '${carId}')">
+                                            Xem chi tiết
+                                            <i data-lucide="arrow-right" style="width: 14px;"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+            });
+
+            if (!relatedServicesHtml) {
+                relatedServicesHtml = '<p style="color: var(--text-muted);">Không có dịch vụ liên quan khác cho dòng xe này.</p>';
+            }
+
+            detailContainer.innerHTML = `
+                <div class="detail-container">
+                    <div class="detail-hero-grid">
+                        <div class="detail-img-wrapper">
+                            <img src="${config.image}" alt="${service.name}" class="detail-img">
+                            <div class="car-tag-on-image">
+                                <i data-lucide="sparkles" style="width: 14px; color: var(--primary-light)"></i>
+                                Hình ảnh thực tế trên ${car.name}
+                            </div>
+                        </div>
+                        <div class="detail-info-pane">
+                            <button class="btn-back" onclick="closeDetailPage()">
+                                <i data-lucide="arrow-left" style="width: 16px;"></i> Quay lại trang chủ
+                            </button>
+                            <span class="detail-title-badge" style="background: rgba(255,106,0,0.1); color: var(--primary-light); padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; width: fit-content; margin-bottom: 1rem;">Gói dịch vụ dành riêng cho xe ${car.name}</span>
+                            <h2 class="detail-title">${service.name}</h2>
+                            <p style="color: var(--text-muted); line-height: 1.6; font-size: 0.95rem;">${service.description}</p>
+                            
+                            <div class="detail-price-box">
+                                <div>
+                                    <span style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Giá hoàn thiện</span>
+                                    <div class="detail-price-val">${parseInt(config.price).toLocaleString('vi-VN')} đ</div>
+                                </div>
+                                <button class="btn-action" style="padding: 0.8rem 1.5rem;" onclick="showToast('Yêu cầu tư vấn của bạn đã được gửi!')">ĐĂNG KÝ NGAY</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-body-content">
+                        <div class="rich-text-content">
+                            ${service.richText || '<p>Nội dung đang được cập nhật...</p>'}
+                        </div>
+                        
+                        ${galleryHtml}
+                        ${videoHtml}
+
+                        <!-- PHẦN DỊCH VỤ CÙNG DÒNG XE -->
+                        <h3 class="detail-section-h3" style="font-size: 1.4rem; color: var(--primary-light); border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 4rem;">Các dịch vụ khác cho xe ${car.name}</h3>
+                        <div class="services-grid" style="margin-top: 1.5rem;">
+                            ${relatedServicesHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            switchView('serviceDetail');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            lucide.createIcons();
+        }
+
+        function closeDetailPage() {
+            switchView('home');
+        }
+
+        function renderBlogList() {
+            const blogGridFull = document.getElementById('blogGridFull');
+            blogGridFull.innerHTML = '';
+            blogs.forEach(blog => {
+                const card = document.createElement('div');
+                card.className = 'blog-card';
+                card.innerHTML = `
+                    <div class="blog-cover-container">
+                        <img src="${blog.cover}" alt="${blog.title}" class="blog-cover">
+                    </div>
+                    <div class="blog-content">
+                        <h3 class="blog-title">${blog.title}</h3>
+                        <p class="blog-excerpt">${blog.seoDesc || 'Nhấn để xem chi tiết bài viết...'}</p>
+                    </div>
+                `;
+                card.addEventListener('click', () => showBlogDetail(blog.id));
+                blogGridFull.appendChild(card);
+            });
+        }
+
+        function showBlogDetail(blogId) {
+            const blog = blogs.find(b => b.id === blogId);
+            if (!blog) return;
+
+            const blogDetailContent = document.getElementById('blogDetailContent');
+            blogDetailContent.innerHTML = `
+                <div style="margin: 2rem 0;">
+                    <img src="${blog.cover}" alt="${blog.title}" style="width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 20px; border: 1px solid var(--border-color);">
+                </div>
+                <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 1.5rem; line-height: 1.3;">${blog.title}</h1>
+                <div class="rich-text-content" style="font-size: 1.1rem; line-height: 1.9;">
+                    ${blog.content}
+                </div>
+            `;
+
+            switchView('blogDetail');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            lucide.createIcons();
+        }
+
+        // ========================================================
+        // 6. HỆ THỐNG QUẢN TRỊ ADMIN (CMS) & LOCALSTORAGE CRUD
+        // ========================================================
+        const adminTabServices = document.getElementById('adminTabServices');
+        const adminTabBlogs = document.getElementById('adminTabBlogs');
+        const adminFormService = document.getElementById('adminFormService');
+        const adminFormBlog = document.getElementById('adminFormBlog');
+
+        const adminMenuServices = document.getElementById('adminMenuServices');
+        const adminMenuBlogs = document.getElementById('adminMenuBlogs');
+
+        adminMenuServices.addEventListener('click', () => {
+            adminMenuServices.classList.add('active');
+            adminMenuBlogs.classList.remove('active');
+            adminTabServices.style.display = 'block';
+            adminTabBlogs.style.display = 'none';
+            adminFormService.style.display = 'none';
+            adminFormBlog.style.display = 'none';
+        });
+
+        adminMenuBlogs.addEventListener('click', () => {
+            adminMenuBlogs.classList.add('active');
+            adminMenuServices.classList.remove('active');
+            adminTabBlogs.style.display = 'block';
+            adminTabServices.style.display = 'none';
+            adminFormService.style.display = 'none';
+            adminFormBlog.style.display = 'none';
+        });
+
+        function renderAdminDashboard() {
+            const tbodyServices = document.getElementById('adminServicesTableBody');
+            tbodyServices.innerHTML = '';
+            services.forEach(s => {
+                let carCount = 0;
+                carModels.forEach(car => {
+                    if (relations[car.id]?.[s.id]) carCount++;
+                });
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight:700;">${s.name}</td>
+                    <td style="color: var(--text-muted); font-size: 0.85rem;">${s.description.substring(0, 50)}...</td>
+                    <td><span style="color: var(--accent); font-weight:600;">${carCount} xe</span></td>
+                    <td style="text-align: right;">
+                        <button class="admin-action-btn edit" onclick="openEditServiceForm('${s.id}')"><i data-lucide="edit" style="width:18px;"></i></button>
+                        <button class="admin-action-btn delete" onclick="deleteService('${s.id}')"><i data-lucide="trash-2" style="width:18px;"></i></button>
+                    </td>
+                `;
+                tbodyServices.appendChild(tr);
+            });
+
+            const tbodyBlogs = document.getElementById('adminBlogsTableBody');
+            tbodyBlogs.innerHTML = '';
+            blogs.forEach(b => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight:700;">${b.title}</td>
+                    <td style="color: var(--text-muted); font-family: monospace;">/${b.slug}</td>
+                    <td><span style="color: var(--success); font-weight:600;">Đã xuất bản</span></td>
+                    <td style="text-align: right;">
+                        <button class="admin-action-btn edit" onclick="openEditBlogForm('${b.id}')"><i data-lucide="edit" style="width:18px;"></i></button>
+                        <button class="admin-action-btn delete" onclick="deleteBlog('${b.id}')"><i data-lucide="trash-2" style="width:18px;"></i></button>
+                    </td>
+                `;
+                tbodyBlogs.appendChild(tr);
+            });
+
+            lucide.createIcons();
+        }
+
+        // ========================================================
+        // 7. CHỨC NĂNG SỬA DỊCH VỤ MỚI (ĐÃ TỐI ƯU HÓA)
+        // ========================================================
+        let editingServiceId = null;
+        let serviceGalleryTemp = [];
+        // Lưu trữ tạm thời trạng thái hình ảnh của từng xe dạng Base64
+        let tempCarImages = {}; 
+
+        // Chuyển đổi tab trong form sửa dịch vụ
+        window.switchFormTab = function(tabId) {
+            document.querySelectorAll('.form-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.form-tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+
+            // Tìm button tương ứng để active
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        };
+
+        document.getElementById('btnShowAddServiceForm').addEventListener('click', () => {
+            editingServiceId = null;
+            document.getElementById('serviceFormTitle').textContent = 'Thêm Dịch Vụ Mới';
+            document.getElementById('editServiceName').value = '';
+            document.getElementById('editServiceDesc').value = '';
+            document.getElementById('editServiceRichText').value = '';
+            document.getElementById('editServiceVideoUrl').value = '';
+            document.getElementById('editServiceSeoTitle').value = '';
+            document.getElementById('editServiceSeoDesc').value = '';
+            
+            serviceGalleryTemp = [];
+            tempCarImages = {};
+            renderGalleryPreviews();
+            renderCarVersionsList(); // Kết xuất bảng xe hàng loạt
+
+            // Mở tab đầu tiên
+            document.querySelector('.form-tabs button').click();
+
+            adminTabServices.style.display = 'none';
+            adminFormService.style.display = 'block';
+        });
+
+        document.getElementById('btnBackToServicesList').addEventListener('click', () => {
+            adminFormService.style.display = 'none';
+            adminTabServices.style.display = 'block';
+        });
+
+        // Kết xuất hàng loạt dòng xe để dễ dàng chỉnh sửa (Tối ưu hóa cốt lõi)
+        function renderCarVersionsList() {
+            const container = document.getElementById('carVersionsListContainer');
+            container.innerHTML = '';
+
+            carModels.forEach(car => {
+                let price = 5000000;
+                let img = imageRepo.default;
+
+                // Lấy thông tin cũ nếu đang chỉnh sửa dịch vụ
+                if (editingServiceId && relations[car.id]?.[editingServiceId]) {
+                    price = relations[car.id][editingServiceId].price;
+                    img = relations[car.id][editingServiceId].image;
+                }
+
+                // Nếu có ảnh tạm thời chưa lưu
+                if (tempCarImages[car.id]) {
+                    img = tempCarImages[car.id];
+                }
+
+                const row = document.createElement('div');
+                row.className = 'car-version-row';
+                row.innerHTML = `
+                    <div class="car-version-name">${car.name}</div>
+                    <div>
+                        <input type="number" class="form-input car-price-input" data-car-id="${car.id}" value="${price}" placeholder="Giá tiền">
+                    </div>
+                    <div>
+                        <img src="${img}" class="car-version-img" id="imgPreview_${car.id}">
+                    </div>
+                    <div>
+                        <div class="file-upload-wrapper">
+                            <label class="btn-file-upload" style="padding: 0.5rem 1rem; font-size: 0.8rem;">
+                                <i data-lucide="upload" style="width:14px;"></i> Thay ảnh xe...
+                                <input type="file" class="car-image-file-input" data-car-id="${car.id}" accept="image/*">
+                            </label>
+                        </div>
+                    </div>
+                `;
+
+                // Xử lý sự kiện tải ảnh riêng biệt lập tức hiển thị
+                const fileInput = row.querySelector('.car-image-file-input');
+                fileInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            const base64 = event.target.result;
+                            tempCarImages[car.id] = base64;
+                            document.getElementById(`imgPreview_${car.id}`).src = base64;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                container.appendChild(row);
+            });
+            lucide.createIcons();
+        }
+
+        // Tải nhiều ảnh vào thư viện
+        document.getElementById('editServiceGalleryFiles').addEventListener('change', function(e) {
+            const files = e.target.files;
+            if (files) {
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        serviceGalleryTemp.push(event.target.result);
+                        renderGalleryPreviews();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+
+        // Kết xuất thư viện ảnh kèm nút XÓA ảnh (Tối ưu hóa mới)
+        function renderGalleryPreviews() {
+            const container = document.getElementById('editServiceGalleryPreviews');
+            container.innerHTML = '';
+            serviceGalleryTemp.forEach((imgData, index) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'gallery-preview-item';
+                wrapper.innerHTML = `
+                    <img src="${imgData}" alt="Preview">
+                    <button class="btn-delete-gallery-img" onclick="deleteGalleryImage(${index})">×</button>
+                `;
+                container.appendChild(wrapper);
+            });
+        }
+
+        window.deleteGalleryImage = function(index) {
+            serviceGalleryTemp.splice(index, 1);
+            renderGalleryPreviews();
+        };
+
+        window.openEditServiceForm = function(id) {
+            const s = services.find(item => item.id === id);
+            if (!s) return;
+
+            editingServiceId = id;
+            document.getElementById('serviceFormTitle').textContent = `Chỉnh sửa: ${s.name}`;
+            document.getElementById('editServiceName').value = s.name;
+            document.getElementById('editServiceDesc').value = s.description;
+            document.getElementById('editServiceRichText').value = s.richText || '';
+            document.getElementById('editServiceVideoUrl').value = s.videoUrl || '';
+            document.getElementById('editServiceSeoTitle').value = s.seoTitle || '';
+            document.getElementById('editServiceSeoDesc').value = s.seoDesc || '';
+
+            serviceGalleryTemp = s.gallery || [];
+            tempCarImages = {};
+            renderGalleryPreviews();
+            renderCarVersionsList(); // Tải danh sách xe hàng loạt
+
+            // Mở tab đầu tiên
+            document.querySelector('.form-tabs button').click();
+
+            adminTabServices.style.display = 'none';
+            adminFormService.style.display = 'block';
+        };
+
+        // Lưu hoàn tất dịch vụ
+        document.getElementById('btnSaveMainService').addEventListener('click', () => {
+            const name = document.getElementById('editServiceName').value.trim();
+            const desc = document.getElementById('editServiceDesc').value.trim();
+            const richText = document.getElementById('editServiceRichText').value;
+            const videoUrl = document.getElementById('editServiceVideoUrl').value.trim();
+            const seoTitle = document.getElementById('editServiceSeoTitle').value.trim();
+            const seoDesc = document.getElementById('editServiceSeoDesc').value.trim();
+
+            if (!name) {
+                showToast("Vui lòng nhập tên dịch vụ!");
+                return;
+            }
+
+            let serviceId = editingServiceId;
+
+            if (editingServiceId) {
+                const index = services.findIndex(s => s.id === editingServiceId);
+                if (index !== -1) {
+                    services[index].name = name;
+                    services[index].description = desc;
+                    services[index].richText = richText;
+                    services[index].gallery = serviceGalleryTemp;
+                    services[index].videoUrl = videoUrl;
+                    services[index].seoTitle = seoTitle;
+                    services[index].seoDesc = seoDesc;
+                }
+            } else {
+                serviceId = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                const newService = {
+                    id: serviceId,
+                    name: name,
+                    description: desc,
+                    richText: richText,
+                    gallery: serviceGalleryTemp,
+                    videoUrl: videoUrl,
+                    seoTitle: seoTitle,
+                    seoDesc: seoDesc
+                };
+                services.push(newService);
+            }
+
+            // LƯU HÀNG LOẠT GIÁ VÀ ẢNH CHO TỪNG DÒNG XE TỪ TRANG TỐI ƯU HÓA
+            document.querySelectorAll('.car-price-input').forEach(input => {
+                const carId = input.dataset.carId;
+                const price = parseInt(input.value) || 0;
+
+                if (!relations[carId]) {
+                    relations[carId] = {};
+                }
+
+                // Lấy ảnh: Ưu tiên ảnh mới tải lên tạm thời, tiếp theo là ảnh cũ hiện tại, cuối cùng là ảnh mặc định
+                let finalImg = imageRepo.default;
+                if (tempCarImages[carId]) {
+                    finalImg = tempCarImages[carId];
+                } else if (editingServiceId && relations[carId]?.[editingServiceId]) {
+                    finalImg = relations[carId][editingServiceId].image;
+                }
+
+                relations[carId][serviceId] = {
+                    price: price,
+                    image: finalImg
+                };
+            });
+
+            saveAllToLocalStorage();
+            showToast("Đã lưu thành công dịch vụ và tất cả phiên bản xe!");
+            adminFormService.style.display = 'none';
+            adminTabServices.style.display = 'block';
+            renderAdminDashboard();
+            renderHomePage();
+        });
+
+        window.deleteService = function(id) {
+            if (confirm("Bạn có chắc chắn muốn xóa dịch vụ này khỏi hệ thống không?")) {
+                services = services.filter(s => s.id !== id);
+                carModels.forEach(car => {
+                    if (relations[car.id]?.[id]) {
+                        delete relations[car.id][id];
+                    }
+                });
+                saveAllToLocalStorage();
+                showToast("Đã xóa dịch vụ!");
+                renderAdminDashboard();
+                renderHomePage();
+            }
+        };
+
+        window.insertEditorTag = function(tag) {
+            const textarea = document.getElementById('editServiceRichText');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            const selectedText = text.substring(start, end);
+            
+            let replacement = '';
+            if (tag === 'h3') {
+                replacement = `<h3>${selectedText || 'Tiêu đề phụ'}</h3>`;
+            } else if (tag === 'p') {
+                replacement = `<p>${selectedText || 'Nhập nội dung đoạn văn...'}</p>`;
+            }
+
+            textarea.value = text.substring(0, start) + replacement + text.substring(end);
+            textarea.focus();
+        };
+
+        // ==========================================
+        // QUẢN LÝ BÀI VIẾT (BLOG)
+        // ==========================================
+        let editingBlogId = null;
+        let currentBlogCover = '';
+
+        document.getElementById('btnShowAddBlogForm').addEventListener('click', () => {
+            editingBlogId = null;
+            document.getElementById('blogFormTitle').textContent = 'Viết Bài Mới';
+            document.getElementById('editBlogTitle').value = '';
+            document.getElementById('editBlogSlug').value = '';
+            document.getElementById('editBlogContent').value = '';
+            document.getElementById('editBlogSeoTitle').value = '';
+            document.getElementById('editBlogSeoDesc').value = '';
+            currentBlogCover = imageRepo.default;
+            
+            const preview = document.getElementById('editBlogCoverPreview');
+            preview.src = currentBlogCover;
+            preview.style.display = 'block';
+
+            adminTabBlogs.style.display = 'none';
+            adminFormBlog.style.display = 'block';
+        });
+
+        document.getElementById('btnBackToBlogsList').addEventListener('click', () => {
+            adminFormBlog.style.display = 'none';
+            adminTabBlogs.style.display = 'block';
+        });
+
+        document.getElementById('editBlogTitle').addEventListener('input', function(e) {
+            if (!editingBlogId) {
+                const title = e.target.value;
+                document.getElementById('editBlogSlug').value = title.toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[đĐ]/g, 'd')
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-');
+            }
+        });
+
+        document.getElementById('editBlogCoverFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    currentBlogCover = event.target.result;
+                    document.getElementById('editBlogCoverPreview').src = currentBlogCover;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        window.openEditBlogForm = function(id) {
+            const b = blogs.find(item => item.id === id);
+            if (!b) return;
+
+            editingBlogId = id;
+            document.getElementById('blogFormTitle').textContent = `Chỉnh sửa: ${b.title}`;
+            document.getElementById('editBlogTitle').value = b.title;
+            document.getElementById('editBlogSlug').value = b.slug;
+            document.getElementById('editBlogContent').value = b.content;
+            document.getElementById('editBlogSeoTitle').value = b.seoTitle || '';
+            document.getElementById('editBlogSeoDesc').value = b.seoDesc || '';
+            currentBlogCover = b.cover;
+
+            const preview = document.getElementById('editBlogCoverPreview');
+            preview.src = currentBlogCover;
+            preview.style.display = 'block';
+
+            adminTabBlogs.style.display = 'none';
+            adminFormBlog.style.display = 'block';
+        };
+
+        document.getElementById('btnSaveBlog').addEventListener('click', () => {
+            const title = document.getElementById('editBlogTitle').value.trim();
+            const slug = document.getElementById('editBlogSlug').value.trim();
+            const content = document.getElementById('editBlogContent').value;
+            const seoTitle = document.getElementById('editBlogSeoTitle').value.trim();
+            const seoDesc = document.getElementById('editBlogSeoDesc').value.trim();
+
+            if (!title || !slug) {
+                showToast("Vui lòng điền tiêu đề và đường dẫn bài viết!");
+                return;
+            }
+
+            if (editingBlogId) {
+                const index = blogs.findIndex(b => b.id === editingBlogId);
+                if (index !== -1) {
+                    blogs[index].title = title;
+                    blogs[index].slug = slug;
+                    blogs[index].content = content;
+                    blogs[index].cover = currentBlogCover;
+                    blogs[index].seoTitle = seoTitle;
+                    blogs[index].seoDesc = seoDesc;
+                }
+            } else {
+                const newBlog = {
+                    id: slug,
+                    title: title,
+                    slug: slug,
+                    content: content,
+                    cover: currentBlogCover,
+                    seoTitle: seoTitle,
+                    seoDesc: seoDesc
+                };
+                blogs.push(newBlog);
+            }
+
+            saveAllToLocalStorage();
+            showToast("Đã lưu bài viết thành công!");
+            adminFormBlog.style.display = 'none';
+            adminTabBlogs.style.display = 'block';
+            renderAdminDashboard();
+            renderHomePage();
+        });
+
+        window.deleteBlog = function(id) {
+            if (confirm("Bạn có chắc chắn muốn xóa bài viết này không?")) {
+                blogs = blogs.filter(b => b.id !== id);
+                saveAllToLocalStorage();
+                showToast("Đã xóa bài viết!");
+                renderAdminDashboard();
+                renderHomePage();
+            }
+        };
+
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // --- KHỞI CHẠY HỆ THỐNG ---
+        window.addEventListener('DOMContentLoaded', () => {
+            renderHomePage();
+        });
+    </script>
+</body>
+</html>

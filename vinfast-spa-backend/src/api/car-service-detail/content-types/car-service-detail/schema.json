@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "car_service_details",
+  "info": {
+    "singularName": "car-service-detail",
+    "pluralName": "car-service-details",
+    "displayName": "Chi Tiết Dịch Vụ Theo Xe",
+    "description": "Bảng liên kết cấu hình ảnh và giá riêng cho từng xe"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "minPrice": {
+      "type": "string"
+    },
+    "maxPrice": {
+      "type": "string"
+    },
+    "customImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "gallery": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": ["images"]
+    },
+    "car_model": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::car-model.car-model"
+    },
+    "service": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::service.service"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# testing
+coverage/
+
+# next.js
+.next/
+out/
+
+# production
+build/
+dist/
+
+# temp
+temp_zip/
+files_to_push.json
+files_part_*.json
+get_files.js
+split_files.js
+test_update.js
+vinfast-spa-project.zip
+
+# misc
+.DS_Store
+*.pem
+*.db
+.cache/
+.tmp/

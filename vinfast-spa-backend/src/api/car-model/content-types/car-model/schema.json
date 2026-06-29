@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "car_models",
+  "info": {
+    "singularName": "car-model",
+    "pluralName": "car-models",
+    "displayName": "Dòng Xe",
+    "description": "Danh sách các dòng xe VinFast"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name"
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}
