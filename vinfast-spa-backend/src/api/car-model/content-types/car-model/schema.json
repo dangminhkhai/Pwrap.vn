@@ -28,6 +28,27 @@
     "isHot": {
       "type": "boolean",
       "default": false
+    },
+    "description": {
+      "type": "text"
+    },
+    "seoTitle": {
+      "type": "string"
+    },
+    "seoDescription": {
+      "type": "text"
+    },
+    "longDescription": {
+      "type": "richtext"
+    },
+    "showLongDescription": {
+      "type": "boolean",
+      "default": true
+    },
+    "banner": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
     }
   }
 }

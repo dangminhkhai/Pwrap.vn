@@ -4,31 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const formatDisplayPrice = (carDetail) => {
-  if (!carDetail) return 'Liên hệ';
-  
-  const hasMin = carDetail.minPrice && carDetail.minPrice.trim() !== '';
-  const hasMax = carDetail.maxPrice && carDetail.maxPrice.trim() !== '';
-  
-  // 1. Nếu có cả min và max -> hiển thị khoảng giá min - max
-  if (hasMin && hasMax) {
-    const min = parseInt(carDetail.minPrice.replace(/\D/g, ''), 10);
-    const max = parseInt(carDetail.maxPrice.replace(/\D/g, ''), 10);
-    const minStr = isNaN(min) ? carDetail.minPrice : min.toLocaleString('vi-VN');
-    const maxStr = isNaN(max) ? carDetail.maxPrice : max.toLocaleString('vi-VN');
-    return `${minStr} - ${maxStr} đ`;
-  }
-  
-  // 2. Nếu chỉ có min -> hiển thị 1 giá
-  if (hasMin) {
-    const min = parseInt(carDetail.minPrice.replace(/\D/g, ''), 10);
-    return isNaN(min) ? carDetail.minPrice : `${min.toLocaleString('vi-VN')} đ`;
-  }
-  
-  return 'Liên hệ';
-};
-
-export default function HomePage({ carModels, services, carServiceDetails, blogs }) {
+export default function HomePage({ carModels, products, blogs }) {
   const [selectedCarId, setSelectedCarId] = useState(carModels[0]?.id || '');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -39,50 +15,36 @@ export default function HomePage({ carModels, services, carServiceDetails, blogs
     setSearchQuery('');
   }, [selectedCarId]);
 
-  // Lọc các dịch vụ áp dụng cho dòng xe đang chọn
-  const activeServices = services.filter(service => {
-    const detail = carServiceDetails.find(
-      d => d.car_model?.id === selectedCarId && d.service?.id === service.id
-    );
-    return !!detail;
+  // Lọc các sản phẩm thuộc về dòng xe đang chọn
+  const activeProducts = products.filter(product => {
+    return product.car_model?.id === selectedCarId;
   });
 
   // Lọc thêm theo từ khóa tìm kiếm trong dòng xe
-  const filteredServices = activeServices.filter((service) => {
+  const filteredProducts = activeProducts.filter((product) => {
     const query = searchQuery.trim().toLowerCase();
     if (!query) return true;
     return (
-      service.name?.toLowerCase().includes(query) ||
-      service.description?.toLowerCase().includes(query)
+      product.title?.toLowerCase().includes(query) ||
+      product.shortDescription?.toLowerCase().includes(query)
     );
   });
 
-  const getCarServiceConfig = (serviceId) => {
-    const detail = carServiceDetails.find(
-      d => d.car_model?.id === selectedCarId && d.service?.id === serviceId
-    );
-    if (!detail) return null;
-
-    let imageUrl = 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80';
-    if (detail.customImage?.url) {
-      imageUrl = `${STRAPI_URL}${detail.customImage.url}`;
-    } else if (services.find(s => s.id === serviceId)?.gallery?.[0]?.url) {
-      imageUrl = `${STRAPI_URL}${services.find(s => s.id === serviceId).gallery[0].url}`;
+  const getProductImage = (product) => {
+    if (product.image?.url) {
+      return `${STRAPI_URL}${product.image.url}`;
     }
-
-    return {
-      minPrice: detail.minPrice,
-      maxPrice: detail.maxPrice,
-      image: imageUrl
-    };
+    return 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80';
   };
+
+  const selectedCar = carModels.find(c => c.id === selectedCarId);
 
   return (
     <div id="viewHome" className="view-section active">
       {/* HERO SECTION */}
       <section className="hero">
-        <h1>Cá Nhân Hóa Dịch Vụ Cho <span style={{color: 'var(--accent)'}}>Từng Dòng Xe VinFast</span></h1>
-        <p>Chọn dòng xe của bạn để xem hình ảnh thi công thực tế và bảng giá trọn gói tối ưu nhất.</p>
+        <h1>Cá Nhân Hóa Nâng Cấp Cho <span style={{color: 'var(--accent)'}}>Từng Dòng Xe VinFast</span></h1>
+        <p>Chọn dòng xe của bạn để xem hình ảnh thi công thực tế và các sản phẩm trọn gói tối ưu nhất.</p>
       </section>
 
       {/* CAR SELECTOR SECTION */}
@@ -108,14 +70,14 @@ export default function HomePage({ carModels, services, carServiceDetails, blogs
         </div>
       </section>
 
-      {/* SERVICES GRID SECTION */}
+      {/* PRODUCTS GRID SECTION */}
       <section style={{marginBottom: '4rem'}}>
         <h2 className="section-title">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-wrench" style={{color: 'var(--primary-light)'}}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-          Bước 2: Các gói dịch vụ khuyên dùng
+          Bước 2: Các gói sản phẩm & dịch vụ khuyên dùng
         </h2>
 
-        {activeServices.length === 0 ? (
+        {activeProducts.length === 0 ? (
           <div style={{
             background: 'var(--card-bg)',
             border: '1px solid var(--border-color)',
@@ -125,32 +87,31 @@ export default function HomePage({ carModels, services, carServiceDetails, blogs
             color: 'var(--text-muted)',
             width: '100%'
           }}>
-            Chưa có dịch vụ nào được cấu hình cho dòng xe này trong trang quản trị.
+            Chưa có sản phẩm nào được cấu hình cho dòng xe này trong trang quản trị.
           </div>
         ) : (
           <div className="services-grid" id="servicesGrid">
-            {activeServices.map((service) => {
-              const config = getCarServiceConfig(service.id);
-              if (!config) return null;
+            {filteredProducts.map((product) => {
+              const imgUrl = getProductImage(product);
 
               return (
-                <div key={service.id} className="service-card">
+                <div key={product.id} className="service-card">
                   {/* Click vào ảnh để xem chi tiết */}
                   <Link
-                    href={`/${carModels.find(c => c.id === selectedCarId)?.slug}/${service.slug}`}
+                    href={`/${selectedCar?.slug}/${product.slug}`}
                     className="service-image-container"
                     style={{ position: 'relative', display: 'block' }}
                   >
                     <Image
-                      src={config.image}
-                      alt={service.name}
+                      src={imgUrl}
+                      alt={product.title}
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"
                       className="service-image"
                     />
                     <div className="car-tag-on-image">
                       <span style={{width: '6px', height: '6px', backgroundColor: 'var(--primary)', borderRadius: '50%'}}></span>
-                      Dành riêng cho {carModels.find(c => c.id === selectedCarId)?.name}
+                      Dành riêng cho {selectedCar?.name}
                     </div>
                   </Link>
 
@@ -158,21 +119,21 @@ export default function HomePage({ carModels, services, carServiceDetails, blogs
                     {/* Click vào tiêu đề để xem chi tiết */}
                     <h3 className="service-title">
                       <Link
-                        href={`/${carModels.find(c => c.id === selectedCarId)?.slug}/${service.slug}`}
+                        href={`/${selectedCar?.slug}/${product.slug}`}
                         style={{ textDecoration: 'none', color: 'inherit' }}
                       >
-                        {service.name}
+                        {product.title}
                       </Link>
                     </h3>
-                    <p className="service-desc">{service.description}</p>
+                    <p className="service-desc">{product.shortDescription}</p>
                     <div className="service-footer">
                       <div>
                         <span className="price-value" style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--primary-light)' }}>
-                          {formatDisplayPrice(config)}
+                          {product.price || 'Liên hệ'}
                         </span>
                       </div>
                       <Link
-                        href={`/${carModels.find(c => c.id === selectedCarId)?.slug}/${service.slug}`}
+                        href={`/${selectedCar?.slug}/${product.slug}`}
                         className="btn-action"
                       >
                         Xem chi tiết
@@ -183,6 +144,26 @@ export default function HomePage({ carModels, services, carServiceDetails, blogs
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {selectedCar && activeProducts.length > 0 && (
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2.5rem' }}>
+            <Link
+              href={`/${selectedCar.slug}`}
+              className="btn-outline"
+              style={{
+                padding: '0.8rem 2rem',
+                borderRadius: '14px',
+                fontSize: '0.95rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}
+            >
+              Xem trang riêng dòng xe {selectedCar.name}
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </Link>
           </div>
         )}
       </section>
@@ -210,7 +191,7 @@ export default function HomePage({ carModels, services, carServiceDetails, blogs
                   />
                 </div>
                 <div className="blog-content">
-                  <h3 className="blog-title" style={{color: 'var(--text-main) !important'}}>{blog.title}</h3>
+                  <h3 className="blog-title">{blog.title}</h3>
                   <p className="blog-excerpt">{blog.seoDesc || 'Xem chi tiết cẩm nang hướng dẫn chăm sóc xe từ chuyên gia...'}</p>
                 </div>
               </Link>

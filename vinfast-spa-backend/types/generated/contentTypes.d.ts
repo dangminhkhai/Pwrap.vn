@@ -483,9 +483,11 @@ export interface ApiCarModelCarModel extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    banner: Schema.Attribute.Media<'images'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
     isHot: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -493,50 +495,17 @@ export interface ApiCarModelCarModel extends Struct.CollectionTypeSchema {
       'api::car-model.car-model'
     > &
       Schema.Attribute.Private;
+    longDescription: Schema.Attribute.RichText;
     name: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
     order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     publishedAt: Schema.Attribute.DateTime;
+    seoDescription: Schema.Attribute.Text;
+    seoTitle: Schema.Attribute.String;
+    showLongDescription: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
     slug: Schema.Attribute.UID<'name'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
-export interface ApiCarServiceDetailCarServiceDetail
-  extends Struct.CollectionTypeSchema {
-  collectionName: 'car_service_details';
-  info: {
-    description: 'B\u1EA3ng li\u00EAn k\u1EBFt c\u1EA5u h\u00ECnh \u1EA3nh v\u00E0 gi\u00E1 ri\u00EAng cho t\u1EEBng xe';
-    displayName: 'Chi Ti\u1EBFt D\u1ECBch V\u1EE5 Theo Xe';
-    pluralName: 'car-service-details';
-    singularName: 'car-service-detail';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    car_model: Schema.Attribute.Relation<
-      'manyToOne',
-      'api::car-model.car-model'
-    >;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    customImage: Schema.Attribute.Media<'images'>;
-    gallery: Schema.Attribute.Media<'images', true>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::car-service-detail.car-service-detail'
-    > &
-      Schema.Attribute.Private;
-    maxPrice: Schema.Attribute.String;
-    minPrice: Schema.Attribute.String;
-    publishedAt: Schema.Attribute.DateTime;
-    service: Schema.Attribute.Relation<'manyToOne', 'api::service.service'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -580,40 +549,42 @@ export interface ApiLeadLead extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiServiceService extends Struct.CollectionTypeSchema {
-  collectionName: 'services';
+export interface ApiProductProduct extends Struct.CollectionTypeSchema {
+  collectionName: 'products';
   info: {
-    description: 'Th\u00F4ng tin chung c\u1EE7a c\u00E1c d\u1ECBch v\u1EE5 \u00F4 t\u00F4';
-    displayName: 'D\u1ECBch V\u1EE5 G\u1ED1c';
-    pluralName: 'services';
-    singularName: 'service';
+    description: 'Danh s\u00E1ch c\u00E1c s\u1EA3n ph\u1EA9m v\u00E0 g\u00F3i n\u00E2ng c\u1EA5p d\u1ECBch v\u1EE5 theo t\u1EEBng d\u00F2ng xe';
+    displayName: 'S\u1EA3n Ph\u1EA9m';
+    pluralName: 'products';
+    singularName: 'product';
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
+    car_model: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::car-model.car-model'
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    description: Schema.Attribute.Text;
+    description: Schema.Attribute.RichText;
     gallery: Schema.Attribute.Media<'images', true>;
+    image: Schema.Attribute.Media<'images'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
-      'api::service.service'
+      'api::product.product'
     > &
       Schema.Attribute.Private;
-    name: Schema.Attribute.String & Schema.Attribute.Required;
-    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    price: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    richText: Schema.Attribute.Blocks;
-    seoDesc: Schema.Attribute.Text;
-    seoTitle: Schema.Attribute.String;
-    slug: Schema.Attribute.UID<'name'>;
+    shortDescription: Schema.Attribute.Text;
+    slug: Schema.Attribute.UID<'title'>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    videoUrl: Schema.Attribute.String;
   };
 }
 
@@ -1161,9 +1132,8 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::blog.blog': ApiBlogBlog;
       'api::car-model.car-model': ApiCarModelCarModel;
-      'api::car-service-detail.car-service-detail': ApiCarServiceDetailCarServiceDetail;
       'api::lead.lead': ApiLeadLead;
-      'api::service.service': ApiServiceService;
+      'api::product.product': ApiProductProduct;
       'api::system-setting.system-setting': ApiSystemSettingSystemSetting;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

@@ -1,5 +1,7 @@
 import "./globals.css";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import FloatingContact from "@/components/FloatingContact";
 
 export const metadata = {
   title: "VinFast Spa - Dịch Vụ Chăm Sóc Xe Điện Cao Cấp",
@@ -22,6 +24,8 @@ export default function RootLayout({ children }) {
       <body suppressHydrationWarning>
         <Header />
         <main className="main-container">{children}</main>
+        <Footer />
+        <FloatingContact />
       </body>
     </html>
   );
